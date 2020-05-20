@@ -17,6 +17,7 @@ def get_score(_name):
 
     file = open('rating.txt', 'r')
     for line in file:
+        # print(repr(line))
         members.append(line.replace("\n", ""))
         # print(repr(members))
         _lin = line.split(" ")
@@ -63,7 +64,7 @@ while not _act == "!exit":
         print(_res[_rnd])
         _score = _score + 50 * _rnd  # _rnd:0 is lose, _rnd:1 is draw, _rnd:2 is win
     elif _act == "!rating":
-        print("Your rating is {}".format(_score))
+        print("Your rating: {}".format(_score))
     elif _act == "!exit":
         update_score()
         print("Bye!")
