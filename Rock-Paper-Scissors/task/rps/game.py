@@ -3,11 +3,6 @@ import os
 import sys
 
 _values = ['rock', 'paper', 'scissors']
-#          user         lose        draw        win
-_game = [['rock',     ['paper',     'rock',      'scissors']],
-         ['paper',    ['scissors',  'paper',     'rock']],
-         ['scissors', ['rock',      'scissors',  'paper']]]
-
 members = []
 
 
@@ -44,25 +39,41 @@ def update_score():
     fp.close()
 
 
+def rotate(_item):
+    # This function rotates items in global list to the left, until selected item is in the middle.
+    _len = len(_values)
+    _mid = _len // 2
+
+    while _values.index(_item) != _mid:
+        _tmp = _values[0]
+        _values.remove(_tmp)
+        _values.append(_tmp)
+
+
 _player = input("Enter your name:")
 print("Hello, {}".format(_player))
 _score = get_score(_player)
 _act = ""
-
+_ready = False
 while not _act == "!exit":
 
     _act = input()
 
     if _act in _values:
-        _usr = _values.index(_act)
-        _rnd = random.randint(0, 2)
 
-        _res = ["Sorry, but computer chose {}".format(_game[_usr][1][_rnd]),
-                "There is a draw ({})".format(_game[_usr][1][_rnd]),
-                "Well done. Computer chose {} and failed".format(_game[_usr][1][_rnd])
-                ]
-        print(_res[_rnd])
-        _score = _score + 50 * _rnd  # _rnd:0 is lose, _rnd:1 is draw, _rnd:2 is win
+        rotate(_act)  # Put user act in middle
+        _rnd = random.randint(0, len(_values) - 1)
+        _usr = _values.index(_act)
+
+        if _usr > _rnd:
+            print("Well done. Computer chose {} and failed".format(_values[_rnd]))
+            _score += 100
+        elif _usr == _rnd:
+            print("There is a draw ({})".format(_values[_usr]))
+            _score += 50
+        else:
+            print("Sorry, but computer chose {}".format(_values[_rnd]))
+
     elif _act == "!rating":
         print("Your rating: {}".format(_score))
     elif _act == "!exit":
@@ -70,5 +81,18 @@ while not _act == "!exit":
         print("Bye!")
         break
     else:
-        print("Invalid input")
+        if len(_act) > 0:
+            if " " not in _act and _act.isprintable() and _act.count(",") > 1:
+                _values.clear()     # remove default values (rock,scissors,paper) and add new list.
+                _values = _act.split(",")
+                if len(_values) % 2 > 0:    # check if odd number of items
+                    _ready = True
+                    print("Okay, let's start")
+                    continue
+        else:
+            if not _ready:
+                _ready = True
+                print("Okay, let's start")
+                continue
 
+        print("Invalid input")
